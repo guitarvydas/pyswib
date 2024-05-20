@@ -1,0 +1,17 @@
+⊢ Sampler ⊣
+
+: Sampler ^=
+  Stuff _end
+
+: Stuff ^=
+  <<<
+    [*
+      | "Hello World": Hello
+      | _end: _break
+      | *: .
+    ]
+  >>>
+
+: Hello ^=
+  "Hello World"
+  
