@@ -1,0 +1,46 @@
+Script {
+Script = Receptron+
+
+Receptron = name ":" "[" OpCF+ "]"
+OpCF = Op? ControlFlow
+Op =
+  | "@enter" name                     -- enter
+  | "@exit" name                      -- exit
+  | "@push-fresh-accumulator"         -- fresh
+  | "@pop-accumulator"                -- pop
+  | "@call" name YesNo                -- call
+  | "@fetch" number                   -- fetch
+  | "@peek" Pattern YesNo             -- peek
+  | "@accept-and-append"              -- accept
+  | "@send" string "to" Port          -- send_string
+  | "@send" "accumulator" "to" Port   -- send_accumulator
+  | "@loop" Block                     -- loop
+  
+  
+ControlFlow =
+  | ".."
+  | ".out"
+  | ".break"
+  | ".continue"
+  | ".quit"
+
+Pattern =
+  | string
+  | "⊥"
+
+Port = "+" | "-"
+
+YesNo = "[" YesClause NoClause "]"
+YesClause = "|" "+" ":" OpCF+
+NoClause = "|" "-" ":" OpCF+
+
+Block = "[" OpCF+ "]"
+
+number = digit+
+
+name = letter alnum*
+string = dq (~dq any)* dq
+dq = "\""
+
+
+}

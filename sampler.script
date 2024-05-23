@@ -1,0 +1,37 @@
+"Sampler", [
+    push_new_string,
+    enter, "Sampler",
+    call, "Stuff"
+    append_return,
+    exit, "Sampler",
+    return_pop
+]
+
+"Stuff", [
+    push_new_string,
+    enter, "Stuff",
+    begin_cycle,
+    mark,
+    peek, "Hello World",
+    ?, [
+        call, "Hello",
+        append_return,
+        continue,
+        mark,
+        peek_eof,
+        ?, [
+            break
+            end_cycle,
+            exit, "Stuff",
+            return_pop
+        ]]]
+
+"Hello", [
+    push_new_string,
+    enter, "Hello",
+    expect_and_append, "Hello World",
+    ?, [
+        exit, "Hello",
+        return_pop
+        ]]
+

@@ -1,0 +1,54 @@
+Sampler : [
+  @enter Sampler
+  .. @push-fresh-accumulator
+  .. @call Stuff [
+    | +:
+      @fetch 1
+      .. @peek ⊥ [
+	| +: @accept-and-append .. @send accumulator to + .out
+	| -: @send "" to - .out
+      ] .out
+    | -: @send "" to - .out
+  ]
+  .. @pop-accumulator
+  .. @exit Sampler
+  .quit
+]
+
+Stuff: [
+  @enter Stuff
+  .. @push-fresh-accumulator
+  .. @loop [
+    @fetch 11
+    .. @peek "Hello World" [
+      | +:
+        @call Hello [
+	  | +: .continue
+	  | -: @send "" to - .break
+	] .out
+      | -:
+        @peek ⊥ [
+	  | +: @send accumulator to + .break
+	  | -:
+	    @accept-and-append
+	    .continue
+	] .out
+    ] .out
+  ]
+  .. @pop-accumulator
+  .. @exit Stuff
+  .quit
+]
+
+Hello: [
+  @enter Stuff
+  .. @push-fresh-accumulator
+  .. @fetch 11
+  .. @peek "Hello World" [
+    | +: @accept-and-append .. @send accumulator to + .out
+    | -: @send "" to - .out
+  ]
+  .. @pop-accumulator
+  .. @exit Hello
+  .quit
+]

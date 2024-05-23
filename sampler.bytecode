@@ -1,0 +1,61 @@
+@script "Sampler"
+  @enter "Sampler"                      .next
+  @push-fresh-accumulator               .next
+  @call "Stuff"
+    @mark-yes
+      @fetch 1                          .next
+      @peek-end 
+        @mark-yes
+          @accept-and-append            .next
+          @send-accumulator +           .out
+        @mark-no
+          @send-string "" -             .out
+        @mark-end                       .out
+    @mark-no
+      @send-string "" -                 .out
+    @mark-end                           .next
+    @pop-accumulator                    .next
+    @exit "Sampler"                     .quit
+@end-script
+
+@script "Stuff"
+  @enter "Stuff"                        .next
+  @push-fresh-accumulator               .next
+  @loop
+    @fetch 11                           .next
+    @peek "Hello World"
+      @mark-yes
+        @call "Hello"
+          @mark-yes
+            -                           .continue
+          @mark-no
+            @send-string "" -           .break
+          @mark-end                     .out
+      @mark-no
+        @peek ⊥
+          @mark-yes
+            @send-accumulator +         .break
+          @mark-no
+            @accept-and-append          .continue
+          @mark-end                     .out
+      @mark-end                         .out
+    @mark-end-loop                      .next
+    @pop-accumulator                    .next
+    @exit "Stuff"                       .quit
+@end-script
+
+
+@script "Stuff"
+  @enter "Stuff"                        .next
+  @push-fresh-accumulator               .next
+  @fetch 11                             .next
+  @peek "Hello World"
+    @mark-yes
+      @accept-and-append                .next
+      @send-accumulator +               .out
+    @mark-no
+      @send-string "" -                 .out
+    @mark-end
+  @pop-accumulator                      .next
+  @exit "Stuff"                         .quit
+@end-script
