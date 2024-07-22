@@ -1,17 +1,19 @@
 ⊢ Sampler ⊣
 
 : Sampler ^=
-  Stuff _end
+  Stuff +1 _end
 
 : Stuff ^=
   <<<
+    +len("Hello World")
     [*
       | "Hello World": Hello
-      | _end: _break
+      | ⊥: _break
       | *: .
     ]
   >>>
 
 : Hello ^=
+  +len("Hello World")
   "Hello World"
   

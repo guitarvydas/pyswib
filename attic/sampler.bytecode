@@ -1,0 +1,61 @@
+@script "Sampler" _                     ..
+  @enter "Sampler"  _                   .next
+  @push-fresh-accumulator _             .next
+  @call "Stuff" _
+    @mark-yes _ _
+      @prefetch 1 _                     .next
+      @peek-end _ _
+        @mark-yes _ _
+          @accept-and-append _ _        .next
+          @send-accumulator ✓ _         .out
+        @mark-no _ _
+          @send-string "" ✗             .out
+        @mark-end _ _                   .out
+    @mark-no _ _
+      @send-string "" ✗                 .out
+    @mark-end _ _                       .next
+    @pop-accumulator _ _                .next
+    @exit "Sampler" _                   .quit
+@end-script _ _                         ..
+
+@script "Stuff" _                       ..
+  @enter "Stuff" _                      .next
+  @push-fresh-accumulator _ _           .next
+  @loop _ _
+    @prefetch 11 _                      .next
+    @peek "Hello World" _
+      @mark-yes _ _
+        @call "Hello" _
+          @mark-yes _ _
+            _ _ _                       .continue
+          @mark-no _ _
+            @send-string "" ✗           .break
+          @mark-end                     .out
+      @mark-no
+        @peek-end
+          @mark-yes
+            @send-accumulator ✓         .break
+          @mark-no _ _
+            @accept-and-append _ _      .continue
+          @mark-end _ _                 .out
+      @mark-end _ _                     .out
+    @mark-end-loop _ _                  .next
+    @pop-accumulator _ _                .next
+    @exit "Stuff" _                     .quit
+@end-script _ _                         ..
+
+
+@script "Stuff" _                       ..
+  @enter "Stuff" _                      .next
+  @push-fresh-accumulator _ _           .next
+  @prefetch 11 _                        .next
+  @peek "Hello World" _
+    @mark-yes _ _
+      @accept-and-append _ _            .next
+      @send-accumulator ✓ _             .out
+    @mark-no _ _
+      @send-string "" ✗                 .out
+    @mark-end _ _
+  @pop-accumulator _ _                  .next
+  @exit "Stuff" _                       .quit
+@end-script _ _                         ..

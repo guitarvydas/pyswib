@@ -16,11 +16,9 @@ def start_function (root_project, root_0D, arg, main_container):
     msg = zd.make_message("", arg)
     zd.inject (main_container, msg)
 
-import sampler
 def components_to_include_in_project (root_project, root_0D, reg):
     zd.register_component (reg, zd.Template (name = "reader", instantiator = reader))
     zd.register_component (reg, zd.Template (name = "outputter", instantiator = outputter))
-    zd.register_component (reg, zd.Template (name = "Sampler", instantiator = sampler.Sampler))
 
 class FileDescriptor:
     def __init__ (self):

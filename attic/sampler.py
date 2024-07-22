@@ -4,18 +4,19 @@ import py0d as zd
 
 # Sampler
 
-def Sampler (vm):
-    vm.execute ([
+def Sampler_init (vm):
+    vm.add_script ("Sampler", [
         vm.push_new_string,
         vm.enter, "Sampler",
           vm.call, Stuff_swib,
           vm.append_returned_string,
+          vm.expect_and_append_eof
         vm.exit, "Sampler",
         vm.return_string_pop
         ])
 
-def Stuff (vm):
-    vm.execute ([
+def Stuff_init (vm):
+    vm.add_script ("Stuff", [
         vm.push_new_string,
         vm.enter, "Stuff",
           vm.begin_cycle,
@@ -34,9 +35,9 @@ def Stuff (vm):
         vm.exit, "Stuff",
         vm.return_string_pop
         ])
-            
-def Hello(vm):
-    vm.execute ([
+
+def Hello_init (vm):
+    vm.add_script ("Hello", [
         vm.push_new_string,
         vm.enter, "Hello", 
           vm.expect_and_append, "Hello World",
@@ -44,21 +45,37 @@ def Hello(vm):
         vm.return_string_pop
         ])
 
+def begin (vm):
+    Sampler_init (vm)
+    Stuff_init (vm)
+    Hello_init (vm)
+    vm.set_IP ("Sampler")
+    # don't resume() here, resume() when "" message received (see below)
 
+import vm
+
+class SWIB_State:
+    def __init__ (self):
+        self.state = "idle"
+        self.vm = vm.VM ()
+        
 def Sampler_handler (eh, msg):
-    if msg.port == "":
-        vm = eh.instance_data
-        vm.resume (msg.datum.srepr ())
-    elif msg.port == "req":
-        # begin parsing when downstream asks for a string
-        vm = eh.instance_data
-        vm.resume (None)
+    if eh.instance_data.state == "io_blocked" and  msg.port == "":
+        eh.state = "running"
+        c = msg.datum.srepr ()
+        eh.instance_data.vm.resume (c)
+    elif eh.instance_data.state != "io_blocked" and msg.port == "req":
+        eh.instance_data.vm.reset ()
+        eh.instance_data.state = "io_blocked"
+        send (eh, "req", new_datum_bang (), msg)
     elif msg.port == "eof":
-        zd.send (eh, "eof", zd.new_datum_bang (), msg)
+        send (eh, "eof" new_datum_bang (), msg)
+        if eh.instance_data.state != "io_blocked":
+            eh.instance_data.vm.resume (self.endchar ())
     else:
-        raise Exception (f'*** internal error, unknown message on port "{msg.port}"')
-    
+        raise Exception ("unknown message to Sampler in state {eh.instance_data.state} on port '{msg.port}'")
+
 def Sampler (reg, owner, name, template_data):
-    name_with_id = zd.gensym ("Sampler")
-    vm = SwibVM ([vm_call, Sampler_swib])
-    return zd.make_leaf (name_with_id, owner, vm, Sampler_handler)
+    name_with_id = gensym ("Echo")
+    swibstate = SWIB_State ()
+    return make_leaf (name_with_id, owner, swibstate, Sampler_handler)
